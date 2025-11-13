@@ -39,6 +39,41 @@ else:
         # Desenvolvimento local
         ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+# CSRF Trusted Origins - permite requisições do Railway
+CSRF_TRUSTED_ORIGINS_ENV = config('CSRF_TRUSTED_ORIGINS', default='', cast=str)
+if CSRF_TRUSTED_ORIGINS_ENV:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in CSRF_TRUSTED_ORIGINS_ENV.split(',')]
+else:
+    # Verifica se está rodando no Railway
+    is_railway = (
+        os.getenv('RAILWAY_ENVIRONMENT') or 
+        os.getenv('RAILWAY_SERVICE_NAME') or
+        os.getenv('PORT')
+    )
+    
+    if is_railway:
+        # Em produção (Railway), adiciona domínios
+        # Nota: Django não suporta wildcards, então precisamos adicionar domínios específicos
+        railway_domain = os.getenv('RAILWAY_PUBLIC_DOMAIN', '')
+        csrf_origins = []
+        
+        # Adiciona domínio público do Railway se disponível
+        if railway_domain:
+            csrf_origins.append(f'https://{railway_domain}')
+        
+        # Adiciona domínios comuns do Railway
+        csrf_origins.extend([
+            'https://cartela-development.up.railway.app',
+            # Adicione outros domínios do Railway aqui conforme necessário
+        ])
+        
+        CSRF_TRUSTED_ORIGINS = csrf_origins
+        CSRF_COOKIE_SECURE = True
+        CSRF_COOKIE_SAMESITE = 'Lax'
+    else:
+        # Desenvolvimento local
+        CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+
 
 # Application definition
 
