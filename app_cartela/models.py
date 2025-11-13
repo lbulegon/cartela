@@ -42,6 +42,8 @@ class Carteira(models.Model):
         if valor <= 0:
             raise ValueError('O valor deve ser maior que zero')
         
+        saldo_anterior_pontos = self.pontos
+        saldo_anterior_fundos = self.fundos
         self.pontos += valor
         self.save()
         
@@ -50,7 +52,9 @@ class Carteira(models.Model):
             tipo=tipo,
             categoria='PONTOS',
             valor=valor,
-            descricao=descricao or f'Adição de {valor} pontos'
+            descricao=descricao or f'Adição de {valor} pontos',
+            saldo_anterior_pontos=saldo_anterior_pontos,
+            saldo_anterior_fundos=saldo_anterior_fundos
         )
         return self
 
@@ -59,6 +63,8 @@ class Carteira(models.Model):
         if valor <= 0:
             raise ValueError('O valor deve ser maior que zero')
         
+        saldo_anterior_pontos = self.pontos
+        saldo_anterior_fundos = self.fundos
         self.fundos += valor
         self.save()
         
@@ -67,7 +73,9 @@ class Carteira(models.Model):
             tipo=tipo,
             categoria='FUNDOS',
             valor=valor,
-            descricao=descricao or f'Adição de R$ {valor}'
+            descricao=descricao or f'Adição de R$ {valor}',
+            saldo_anterior_pontos=saldo_anterior_pontos,
+            saldo_anterior_fundos=saldo_anterior_fundos
         )
         return self
 
@@ -78,6 +86,8 @@ class Carteira(models.Model):
         if self.pontos < valor:
             raise ValueError('Pontos insuficientes')
         
+        saldo_anterior_pontos = self.pontos
+        saldo_anterior_fundos = self.fundos
         self.pontos -= valor
         self.save()
         
@@ -86,7 +96,9 @@ class Carteira(models.Model):
             tipo='DEBITO',
             categoria='PONTOS',
             valor=-valor,
-            descricao=descricao or f'Débito de {valor} pontos'
+            descricao=descricao or f'Débito de {valor} pontos',
+            saldo_anterior_pontos=saldo_anterior_pontos,
+            saldo_anterior_fundos=saldo_anterior_fundos
         )
         return self
 
@@ -97,6 +109,8 @@ class Carteira(models.Model):
         if self.fundos < valor:
             raise ValueError('Fundos insuficientes')
         
+        saldo_anterior_pontos = self.pontos
+        saldo_anterior_fundos = self.fundos
         self.fundos -= valor
         self.save()
         
@@ -105,7 +119,9 @@ class Carteira(models.Model):
             tipo='DEBITO',
             categoria='FUNDOS',
             valor=-valor,
-            descricao=descricao or f'Débito de R$ {valor}'
+            descricao=descricao or f'Débito de R$ {valor}',
+            saldo_anterior_pontos=saldo_anterior_pontos,
+            saldo_anterior_fundos=saldo_anterior_fundos
         )
         return self
 

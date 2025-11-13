@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira - Cartela.bet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #2a2a2a;
+            border-bottom: 2px solid #FFD700;
+            padding: 20px 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .logo-text .main {
+            color: #FFD700;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .logo-text .sub {
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .nav-links .btn-primary {
+            background: #FFD700;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        
+        .nav-links .btn-primary:hover {
+            background: #FFEB3B;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .saldo-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .saldo-card {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .saldo-card h3 {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .saldo-card .valor {
+            color: #FFD700;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .filtros {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .filtros form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #FFD700;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #FFD700;
+        }
+        
+        .btn-filter {
+            padding: 10px 20px;
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-filter:hover {
+            background: #FFEB3B;
+        }
+        
+        .btn-link {
+            padding: 10px 20px;
+            background: transparent;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .btn-link:hover {
+            background: #FFD700;
+            color: #1a1a1a;
+        }
+        
+        .transacoes-table {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .table-header span {
+            color: #FFD700;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .table-row {
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            transition: background 0.3s;
+        }
+        
+        .table-row:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .table-row span {
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .valor-positivo {
+            color: #6bff6b;
+        }
+        
+        .valor-negativo {
+            color: #ff6b6b;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-deposito {
+            background: rgba(51, 204, 51, 0.2);
+            color: #6bff6b;
+        }
+        
+        .badge-bonus {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+        
+        .badge-premio {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+        }
+        
+        .badge-debito {
+            background: rgba(204, 51, 51, 0.2);
+            color: #ff6b6b;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .pagination .current {
+            background: #FFD700;
+            color: #1a1a1a;
+            border-color: #FFD700;
+        }
+        
+        .pagination a:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-container">
+                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="4" width="32" height="32" rx="4" fill="#FFD700"/>
+                    <line x1="14" y1="14" x2="26" y2="14" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="20" x2="26" y2="20" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="26" x2="26" y2="26" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="8" x2="14" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="20" y1="8" x2="20" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="26" y1="8" x2="26" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <path d="M11 11 L13 13 L11 15" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M19 19 L21 21 L19 23" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M27 27 L29 29 L27 31" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <div class="logo-text">
+                    <span class="main">Cartela</span>
+                    <span class="sub">.bet</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'app_cartela:dashboard' %}">Dashboard</a>
+                <a href="{% url 'app_cartela:carteira' %}">Carteira</a>
+                <a href="{% url 'app_cartela:deposito' %}" class="btn-primary">Depositar</a>
+                <a href="{% url 'app_cartela:logout' %}">Sair</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="saldo-cards">
+            <div class="saldo-card">
+                <h3>Pontos</h3>
+                <div class="valor">{{ carteira.pontos|floatformat:2 }}</div>
+            </div>
+            <div class="saldo-card">
+                <h3>Fundos</h3>
+                <div class="valor">R$ {{ carteira.fundos|floatformat:2 }}</div>
+            </div>
+        </div>
+        
+        <div class="filtros">
+            <form method="GET">
+                <div class="form-group">
+                    <label for="tipo">Tipo</label>
+                    <select name="tipo" id="tipo">
+                        <option value="">Todos</option>
+                        {% for valor, nome in tipos %}
+                        <option value="{{ valor }}" {% if tipo_filter == valor %}selected{% endif %}>{{ nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="categoria">Categoria</label>
+                    <select name="categoria" id="categoria">
+                        <option value="">Todas</option>
+                        {% for valor, nome in categorias %}
+                        <option value="{{ valor }}" {% if categoria_filter == valor %}selected{% endif %}>{{ nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn-filter">Filtrar</button>
+                <a href="{% url 'app_cartela:carteira' %}" class="btn-link">Limpar</a>
+            </form>
+        </div>
+        
+        <div class="transacoes-table">
+            <div class="table-header">
+                <span>Data</span>
+                <span>Tipo</span>
+                <span>Categoria</span>
+                <span>Valor</span>
+                <span>Descrição</span>
+            </div>
+            
+            {% if page_obj %}
+                {% for transacao in page_obj %}
+                <div class="table-row">
+                    <span>{{ transacao.criado_em|date:"d/m/Y H:i" }}</span>
+                    <span>
+                        <span class="badge badge-{{ transacao.tipo|lower }}">
+                            {{ transacao.get_tipo_display }}
+                        </span>
+                    </span>
+                    <span>{{ transacao.get_categoria_display }}</span>
+                    <span class="{% if transacao.valor >= 0 %}valor-positivo{% else %}valor-negativo{% endif %}">
+                        {% if transacao.categoria == 'PONTOS' %}
+                            {{ transacao.valor|floatformat:2 }} pontos
+                        {% else %}
+                            R$ {{ transacao.valor|floatformat:2 }}
+                        {% endif %}
+                    </span>
+                    <span>{{ transacao.descricao|default:"-" }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>Nenhuma transação encontrada.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if categoria_filter %}&categoria={{ categoria_filter }}{% endif %}">« Primeira</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if categoria_filter %}&categoria={{ categoria_filter }}{% endif %}">‹ Anterior</a>
+            {% endif %}
+            
+            <span class="current">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if categoria_filter %}&categoria={{ categoria_filter }}{% endif %}">Próxima ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if tipo_filter %}&tipo={{ tipo_filter }}{% endif %}{% if categoria_filter %}&categoria={{ categoria_filter }}{% endif %}">Última »</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

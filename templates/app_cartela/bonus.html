@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bônus e Prêmios - Cartela.bet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #2a2a2a;
+            border-bottom: 2px solid #FFD700;
+            padding: 20px 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .logo-text .main {
+            color: #FFD700;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .logo-text .sub {
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card h2 {
+            color: #FFD700;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #FFD700;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: #1a1a1a;
+            border: 2px solid #3a3a3a;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+            background: #1f1f1f;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #666;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            background: #FFEB3B;
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .btn-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #FFD700;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+        
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .alert-error {
+            background-color: rgba(204, 51, 51, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(204, 51, 51, 0.3);
+        }
+        
+        .alert-success {
+            background-color: rgba(51, 204, 51, 0.2);
+            color: #6bff6b;
+            border: 1px solid rgba(51, 204, 51, 0.3);
+        }
+        
+        .info-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .info-box p {
+            color: #FFD700;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-container">
+                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="4" width="32" height="32" rx="4" fill="#FFD700"/>
+                    <line x1="14" y1="14" x2="26" y2="14" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="20" x2="26" y2="20" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="26" x2="26" y2="26" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="8" x2="14" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="20" y1="8" x2="20" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="26" y1="8" x2="26" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <path d="M11 11 L13 13 L11 15" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M19 19 L21 21 L19 23" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M27 27 L29 29 L27 31" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <div class="logo-text">
+                    <span class="main">Cartela</span>
+                    <span class="sub">.bet</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'app_cartela:dashboard' %}">Dashboard</a>
+                <a href="{% url 'app_cartela:carteira' %}">Carteira</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="card">
+            <h2>Adicionar Bônus ou Prêmio</h2>
+            
+            <div class="info-box">
+                <p><strong>Área Administrativa:</strong> Use este formulário para adicionar bônus ou prêmios para usuários. Selecione o usuário, o tipo de crédito (pontos ou fundos), o valor e uma descrição opcional.</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="usuario_id">Usuário</label>
+                    <select name="usuario_id" id="usuario_id" required>
+                        <option value="">Selecione um usuário</option>
+                        {% for usuario in usuarios %}
+                        <option value="{{ usuario.id }}">{{ usuario.username }} ({{ usuario.email }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo</label>
+                        <select name="tipo" id="tipo" required>
+                            {% for valor, nome in tipos %}
+                            <option value="{{ valor }}">{{ nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select name="categoria" id="categoria" required>
+                            <option value="FUNDOS">Fundos (R$)</option>
+                            <option value="PONTOS">Pontos</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="valor">Valor</label>
+                    <input type="text" id="valor" name="valor" placeholder="0.00" required autofocus step="0.01" min="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="descricao">Descrição (opcional)</label>
+                    <textarea id="descricao" name="descricao" placeholder="Descrição do bônus ou prêmio..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn-submit">Adicionar</button>
+            </form>
+            
+            <a href="{% url 'app_cartela:dashboard' %}" class="btn-link">← Voltar para Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
+
