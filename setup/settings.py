@@ -20,7 +20,24 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-producti
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+# ALLOWED_HOSTS - aceita domínios do Railway automaticamente
+ALLOWED_HOSTS_ENV = config('ALLOWED_HOSTS', default='', cast=str)
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_ENV.split(',')]
+else:
+    # Verifica se está rodando no Railway
+    is_railway = (
+        os.getenv('RAILWAY_ENVIRONMENT') or 
+        os.getenv('RAILWAY_SERVICE_NAME') or
+        os.getenv('PORT')  # Railway sempre define PORT
+    )
+    
+    if is_railway:
+        # Em produção (Railway), aceita todos os domínios .railway.app
+        ALLOWED_HOSTS = ['.railway.app', '.up.railway.app']
+    else:
+        # Desenvolvimento local
+        ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
