@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cartela.bet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #2a2a2a;
+            border-bottom: 2px solid #FFD700;
+            padding: 20px 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .logo-text .main {
+            color: #FFD700;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .logo-text .sub {
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info span {
+            font-size: 14px;
+            color: #fff;
+        }
+        
+        .user-info strong {
+            color: #FFD700;
+        }
+        
+        .btn-logout {
+            padding: 8px 20px;
+            background: transparent;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #FFD700;
+            color: #1a1a1a;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .welcome-card {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .welcome-card h2 {
+            color: #FFD700;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .welcome-card p {
+            color: #ccc;
+            font-size: 16px;
+        }
+        
+        .welcome-card strong {
+            color: #FFD700;
+        }
+        
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: rgba(51, 204, 51, 0.2);
+            color: #6bff6b;
+            border: 1px solid rgba(51, 204, 51, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-container">
+                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="4" width="32" height="32" rx="4" fill="#FFD700"/>
+                    <line x1="14" y1="14" x2="26" y2="14" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="20" x2="26" y2="20" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="26" x2="26" y2="26" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="14" y1="8" x2="14" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="20" y1="8" x2="20" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="26" y1="8" x2="26" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <path d="M11 11 L13 13 L11 15" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M19 19 L21 21 L19 23" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M27 27 L29 29 L27 31" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <div class="logo-text">
+                    <span class="main">Cartela</span>
+                    <span class="sub">.bet</span>
+                </div>
+            </div>
+            <div class="user-info">
+                <span>Olá, <strong>{{ user.username }}</strong></span>
+                <a href="{% url 'app_cartela:logout' %}" class="btn-logout">Sair</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="welcome-card">
+            <h2>Bem-vindo ao Dashboard!</h2>
+            <p>Você está logado como <strong>{{ user.username }}</strong>.</p>
+        </div>
+    </div>
+</body>
+</html>
+
