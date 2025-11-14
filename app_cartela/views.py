@@ -81,7 +81,7 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     """View do dashboard do jogador/cliente"""
-    from betting.models import Bet, CartelaInstance
+    from betting.models import Bet, CartelaInstance, Event
     
     carteira, created = Carteira.objects.get_or_create(usuario=request.user)
     
@@ -103,12 +103,18 @@ def dashboard_view(request):
         status='APOSTA_PENDENTE'
     ).select_related('event', 'cartela_template').order_by('-created_at')[:5]
     
+    # Eventos disponíveis (agendados e ao vivo)
+    eventos_disponiveis = Event.objects.filter(
+        status__in=['SCHEDULED', 'LIVE']
+    ).order_by('start_time')[:5]
+    
     return render(request, 'app_cartela/jogador_dashboard.html', {
         'user': request.user,
         'carteira': carteira,
         'ultimas_transacoes': ultimas_transacoes,
         'ultimas_apostas': ultimas_apostas,
         'cartelas_pendentes': cartelas_pendentes,
+        'eventos_disponiveis': eventos_disponiveis,
     })
 
 

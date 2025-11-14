@@ -680,6 +680,36 @@
         </div>
         {% endif %}
         
+        {% if eventos_disponiveis %}
+        <div class="eventos-section">
+            <h3>
+                <span>Eventos Disponíveis</span>
+            </h3>
+            {% for evento in eventos_disponiveis %}
+            <div class="event-card" onclick="window.location.href='{% url 'app_cartela:evento' evento.id %}'">
+                <div class="event-header">
+                    <div class="event-teams">
+                        <div class="team-home">{{ evento.team_home }}</div>
+                        <div class="team-away">x {{ evento.team_away }}</div>
+                    </div>
+                    <span class="event-status {% if evento.status == 'LIVE' %}live{% else %}scheduled{% endif %}">
+                        {% if evento.status == 'LIVE' %}
+                            🔴 AO VIVO
+                        {% else %}
+                            {{ evento.get_status_display }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="event-info">
+                    <span>{{ evento.get_sport_display }}</span>
+                    <span>{{ evento.start_time|date:"d/m/Y H:i" }}</span>
+                    <a href="{% url 'app_cartela:evento' evento.id %}" class="event-action" onclick="event.stopPropagation();">Criar Cartela →</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <div class="transacoes-recentes">
             <h3>Últimas Transações</h3>
             {% if ultimas_transacoes %}
