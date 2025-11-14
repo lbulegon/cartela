@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>{{ evento.team_home }} x {{ evento.team_away }} - Cartela.bet</title>
     <style>
         * {
@@ -16,6 +16,8 @@
             background: #1a1a1a;
             min-height: 100vh;
             color: #fff;
+            overflow-x: hidden;
+            width: 100%;
         }
         
         .header {
@@ -48,6 +50,26 @@
             .nav-links {
                 width: 100%;
                 justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+            
+            .nav-links a {
+                font-size: 12px;
+                padding: 6px 10px;
+                margin: 2px;
+            }
+            
+            .logo-icon {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .logo-text .main {
+                font-size: 20px;
+            }
+            
+            .logo-text .sub {
+                font-size: 12px;
             }
         }
         
@@ -102,6 +124,7 @@
             padding: 0 20px;
             width: 100%;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .event-header {
@@ -110,6 +133,8 @@
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .event-teams {
@@ -163,6 +188,8 @@
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .selections-section h3 {
@@ -188,6 +215,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 15px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .selection-card {
@@ -239,6 +268,8 @@
             margin-bottom: 30px;
             position: sticky;
             top: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .cartela-preview h3 {
@@ -327,6 +358,11 @@
         .main-content-grid {
             max-width: 1400px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         @media (max-width: 1024px) {
@@ -337,16 +373,23 @@
             .cartela-preview {
                 position: relative !important;
                 top: 0 !important;
+                margin-top: 20px;
             }
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            
             .container {
-                padding: 0 15px;
+                padding: 15px;
+                margin: 20px auto;
             }
             
             .event-header {
-                padding: 20px;
+                padding: 20px 15px;
+                margin-bottom: 20px;
             }
             
             .event-teams {
@@ -358,16 +401,150 @@
                 font-size: 22px;
             }
             
+            .event-info {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
             .selections-section {
-                padding: 20px;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .selections-section h3 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            
+            .selection-group {
+                margin-bottom: 20px;
+            }
+            
+            .selection-group-title {
+                font-size: 14px;
+                margin-bottom: 10px;
             }
             
             .selections-grid {
                 grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .selection-card {
+                padding: 12px;
+            }
+            
+            .selection-desc {
+                font-size: 13px;
+            }
+            
+            .selection-odd {
+                font-size: 18px;
             }
             
             .cartela-preview {
-                padding: 20px;
+                padding: 15px;
+                margin-top: 20px;
+                position: relative;
+                top: 0;
+            }
+            
+            .cartela-preview h3 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            
+            .selected-item {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .selected-item .desc {
+                font-size: 12px;
+            }
+            
+            .selected-item .odd {
+                font-size: 14px;
+            }
+            
+            .total-row {
+                font-size: 13px;
+            }
+            
+            .total-row.final {
+                font-size: 16px;
+            }
+            
+            .btn-primary {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 10px auto;
+            }
+            
+            .event-header {
+                padding: 15px 10px;
+            }
+            
+            .team {
+                font-size: 20px;
+            }
+            
+            .event-info {
+                font-size: 12px;
+            }
+            
+            .selections-section {
+                padding: 12px;
+            }
+            
+            .selection-card {
+                padding: 10px;
+            }
+            
+            .selection-desc {
+                font-size: 12px;
+            }
+            
+            .selection-odd {
+                font-size: 16px;
+            }
+            
+            .cartela-preview {
+                padding: 12px;
+            }
+            
+            .logo-text .main {
+                font-size: 20px;
+            }
+            
+            .logo-text .sub {
+                font-size: 12px;
+            }
+            
+            .nav-links a {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .team {
+                font-size: 18px;
+            }
+            
+            .selection-card {
+                padding: 8px;
+            }
+            
+            .cartela-preview {
+                padding: 10px;
             }
         }
     </style>
@@ -416,7 +593,7 @@
             </div>
         </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 30px;">
+        <div class="main-content-grid">
             <div>
                 <div class="selections-section">
                     <h3>Selecione os Quadrinhos da Sua Cartela</h3>
