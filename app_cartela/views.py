@@ -15,21 +15,28 @@ def login_view(request):
         return redirect('app_cartela:dashboard')
     
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
         
-        if username and password:
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.success(request, f'Bem-vindo, {user.username}!')
-                # Redireciona baseado no tipo de usuário
-                if user.is_staff:
-                    return redirect('app_cartela:admin_dashboard')
-                next_url = request.GET.get('next', 'app_cartela:dashboard')
-                return redirect(next_url)
-            else:
-                messages.error(request, 'Usuário ou senha incorretos.')
+        if email and password:
+            # Busca o usuário pelo email
+            from django.contrib.auth.models import User
+            try:
+                user = User.objects.get(email=email)
+                # Autentica usando o username do usuário encontrado
+                user = authenticate(request, username=user.username, password=password)
+                if user is not None:
+                    login(request, user)
+                    messages.success(request, f'Bem-vindo, {user.username}!')
+                    # Redireciona baseado no tipo de usuário
+                    if user.is_staff:
+                        return redirect('app_cartela:admin_dashboard')
+                    next_url = request.GET.get('next', 'app_cartela:dashboard')
+                    return redirect(next_url)
+                else:
+                    messages.error(request, 'Email ou senha incorretos.')
+            except User.DoesNotExist:
+                messages.error(request, 'Email ou senha incorretos.')
         else:
             messages.error(request, 'Por favor, preencha todos os campos.')
     
@@ -112,26 +119,53 @@ def admin_dashboard_view(request):
         messages.error(request, 'Acesso negado. Apenas administradores.')
         return redirect('app_cartela:dashboard')
     
-    from betting.models import Event, Bet, CartelaInstance, RiskExposureMetrics
+    from betting.models import (
+        Event, Bet, CartelaInstance, RiskExposureMetrics,
+        CartelaTemplate, MarketSelection, Influencer
+    )
+    from app_cartela.models import Carteira, Transacao
     from django.contrib.auth.models import User
-    from django.db.models import Sum, Count, Q
+    from django.db.models import Sum, Count, Q, Avg
     from django.utils import timezone
     from datetime import timedelta
     
     # Estatísticas gerais
     total_usuarios = User.objects.count()
+    usuarios_hoje = User.objects.filter(
+        date_joined__date=timezone.now().date()
+    ).count()
+    
     total_eventos = Event.objects.count()
     eventos_hoje = Event.objects.filter(
         start_time__date=timezone.now().date()
     ).count()
     eventos_ao_vivo = Event.objects.filter(status='LIVE').count()
+    eventos_agendados = Event.objects.filter(status='SCHEDULED').count()
+    
+    # Estatísticas de cartelas
+    total_cartelas = CartelaInstance.objects.count()
+    cartelas_pendentes_count = CartelaInstance.objects.filter(
+        status='APOSTA_PENDENTE'
+    ).count()
+    cartelas_confirmadas = CartelaInstance.objects.filter(
+        status='APOSTA_CONFIRMADA'
+    ).count()
+    total_templates = CartelaTemplate.objects.filter(ativo=True).count()
+    
+    # Estatísticas de seleções/quadrinhos
+    total_selecoes = MarketSelection.objects.count()
+    selecoes_ao_vivo = MarketSelection.objects.filter(is_live=True).count()
     
     # Estatísticas de apostas
     total_apostas = Bet.objects.count()
     apostas_hoje = Bet.objects.filter(
         created_at__date=timezone.now().date()
     ).count()
+    apostas_pendentes = Bet.objects.filter(is_won__isnull=True).count()
+    apostas_ganhas = Bet.objects.filter(is_won=True).count()
+    apostas_perdidas = Bet.objects.filter(is_won=False).count()
     
+    # Volume financeiro
     volume_total = Bet.objects.aggregate(
         total=Sum('stake')
     )['total'] or 0
@@ -142,10 +176,36 @@ def admin_dashboard_view(request):
         total=Sum('stake')
     )['total'] or 0
     
-    # Cartelas pendentes
-    cartelas_pendentes_count = CartelaInstance.objects.filter(
-        status='APOSTA_PENDENTE'
+    payout_total = Bet.objects.filter(is_won=True).aggregate(
+        total=Sum('potential_return')
+    )['total'] or 0
+    
+    # Carteiras
+    total_carteiras = Carteira.objects.count()
+    saldo_total_pontos = Carteira.objects.aggregate(
+        total=Sum('pontos')
+    )['total'] or 0
+    saldo_total_fundos = Carteira.objects.aggregate(
+        total=Sum('fundos')
+    )['total'] or 0
+    
+    # Transações
+    total_transacoes = Transacao.objects.count()
+    transacoes_hoje = Transacao.objects.filter(
+        criado_em__date=timezone.now().date()
     ).count()
+    
+    # Métricas de risco
+    risco_alto = RiskExposureMetrics.objects.filter(
+        payout_maximo__gt=10000
+    ).count()
+    risco_medio = RiskExposureMetrics.objects.filter(
+        payout_maximo__gt=5000,
+        payout_maximo__lte=10000
+    ).count()
+    
+    # Influenciadores
+    total_influenciadores = Influencer.objects.filter(is_active=True).count()
     
     # Eventos recentes
     eventos_recentes = Event.objects.filter(
@@ -156,28 +216,62 @@ def admin_dashboard_view(request):
     apostas_recentes = Bet.objects.select_related(
         'cartela',
         'cartela__user',
-        'cartela__event'
+        'cartela__event',
+        'cartela__cartela_template'
     ).order_by('-created_at')[:10]
     
-    # Métricas de risco
-    risco_alto = RiskExposureMetrics.objects.filter(
-        payout_maximo__gt=10000
-    ).count()
+    # Cartelas pendentes
+    cartelas_pendentes = CartelaInstance.objects.filter(
+        status='APOSTA_PENDENTE'
+    ).select_related('user', 'event', 'cartela_template').order_by('-created_at')[:10]
+    
+    # Templates de cartela
+    templates_ativos = CartelaTemplate.objects.filter(ativo=True).order_by('tipo', 'nome')
     
     return render(request, 'app_cartela/admin_dashboard.html', {
         'user': request.user,
+        # Usuários
         'total_usuarios': total_usuarios,
+        'usuarios_hoje': usuarios_hoje,
+        # Eventos
         'total_eventos': total_eventos,
         'eventos_hoje': eventos_hoje,
         'eventos_ao_vivo': eventos_ao_vivo,
+        'eventos_agendados': eventos_agendados,
+        # Cartelas
+        'total_cartelas': total_cartelas,
+        'cartelas_pendentes_count': cartelas_pendentes_count,
+        'cartelas_confirmadas': cartelas_confirmadas,
+        'total_templates': total_templates,
+        'total_selecoes': total_selecoes,
+        'selecoes_ao_vivo': selecoes_ao_vivo,
+        # Apostas
         'total_apostas': total_apostas,
         'apostas_hoje': apostas_hoje,
+        'apostas_pendentes': apostas_pendentes,
+        'apostas_ganhas': apostas_ganhas,
+        'apostas_perdidas': apostas_perdidas,
+        # Financeiro
         'volume_total': volume_total,
         'volume_hoje': volume_hoje,
-        'cartelas_pendentes_count': cartelas_pendentes_count,
+        'payout_total': payout_total,
+        # Carteiras
+        'total_carteiras': total_carteiras,
+        'saldo_total_pontos': saldo_total_pontos,
+        'saldo_total_fundos': saldo_total_fundos,
+        # Transações
+        'total_transacoes': total_transacoes,
+        'transacoes_hoje': transacoes_hoje,
+        # Risco
         'risco_alto': risco_alto,
+        'risco_medio': risco_medio,
+        # Influenciadores
+        'total_influenciadores': total_influenciadores,
+        # Listas
         'eventos_recentes': eventos_recentes,
         'apostas_recentes': apostas_recentes,
+        'cartelas_pendentes': cartelas_pendentes,
+        'templates_ativos': templates_ativos,
     })
 
 
