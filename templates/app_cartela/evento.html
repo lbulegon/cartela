@@ -376,6 +376,18 @@
         .btn-primary:disabled {
             background: #666;
             cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .info-message {
+            padding: 10px;
+            margin-top: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #FFD700;
+            text-align: center;
         }
         
         .empty-state {
@@ -763,7 +775,38 @@
             totalSelections.textContent = selectionIds.length;
             totalOdd.textContent = oddAcumulada.toFixed(2);
             totalPremio.textContent = 'R$ ' + (stake * oddAcumulada).toFixed(2);
-            btnConfirm.disabled = selectionIds.length < 3;
+            
+            // Habilita o botão apenas se houver 3 ou mais seleções
+            const minSelections = 3;
+            const hasEnoughSelections = selectionIds.length >= minSelections;
+            btnConfirm.disabled = !hasEnoughSelections;
+            
+            // Adiciona mensagem informativa se não houver seleções suficientes
+            if (!hasEnoughSelections && selectionIds.length > 0) {
+                const missingCount = minSelections - selectionIds.length;
+                const infoMsg = document.createElement('div');
+                infoMsg.className = 'info-message';
+                infoMsg.style.cssText = 'padding: 10px; margin-top: 10px; background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; font-size: 12px; color: #FFD700; text-align: center;';
+                infoMsg.textContent = `Selecione mais ${missingCount} quadrinho${missingCount > 1 ? 's' : ''} para confirmar`;
+                
+                // Remove mensagem anterior se existir
+                const existingMsg = container.parentElement.querySelector('.info-message');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                
+                // Adiciona a mensagem antes do botão
+                const cartelaTotal = container.parentElement.querySelector('.cartela-total');
+                if (cartelaTotal && !cartelaTotal.nextElementSibling?.classList.contains('info-message')) {
+                    cartelaTotal.insertAdjacentElement('afterend', infoMsg);
+                }
+            } else {
+                // Remove mensagem se houver seleções suficientes
+                const existingMsg = container.parentElement.querySelector('.info-message');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+            }
             
             // Adiciona event listeners aos botões de remoção
             container.querySelectorAll('.remove-btn').forEach(btn => {
@@ -793,10 +836,13 @@
             updateCartelaPreview();
         }
         
+        // Inicializa a preview da cartela ao carregar a página
+        updateCartelaPreview();
+        
         document.getElementById('btn-confirm').addEventListener('click', function() {
             const selectionIds = Object.keys(selections);
             if (selectionIds.length < 3) {
-                alert('Selecione pelo menos 3 quadrinhos');
+                alert('Selecione pelo menos 3 quadrinhos para confirmar a cartela');
                 return;
             }
             
