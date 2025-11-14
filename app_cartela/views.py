@@ -1,10 +1,57 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
+from django.conf import settings
 from decimal import Decimal, InvalidOperation
 from .models import Carteira, Transacao
+
+
+def register_view(request):
+    """View para cadastro de novo jogador"""
+    if request.user.is_authenticated:
+        return redirect('app_cartela:dashboard')
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+        
+        # Validações
+        if not username or not email or not password:
+            messages.error(request, 'Por favor, preencha todos os campos.')
+        elif password != password_confirm:
+            messages.error(request, 'As senhas não coincidem.')
+        elif len(password) < 8:
+            messages.error(request, 'A senha deve ter pelo menos 8 caracteres.')
+        elif User.objects.filter(username=username).exists():
+            messages.error(request, 'Este nome de usuário já está em uso.')
+        elif User.objects.filter(email=email).exists():
+            messages.error(request, 'Este email já está cadastrado.')
+        else:
+            # Cria o usuário
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+            user.save()
+            
+            # Cria a carteira automaticamente (via signal)
+            Carteira.objects.get_or_create(usuario=user)
+            
+            messages.success(request, 'Cadastro realizado com sucesso! Faça login para continuar.')
+            return redirect('app_cartela:login')
+    
+    return render(request, 'app_cartela/register.html')
 
 
 def login_view(request):
@@ -20,7 +67,6 @@ def login_view(request):
         
         if email and password:
             # Busca o usuário pelo email
-            from django.contrib.auth.models import User
             try:
                 user = User.objects.get(email=email)
                 # Autentica usando o username do usuário encontrado
@@ -41,6 +87,85 @@ def login_view(request):
             messages.error(request, 'Por favor, preencha todos os campos.')
     
     return render(request, 'app_cartela/login.html')
+
+
+def password_reset_request_view(request):
+    """View para solicitar recuperação de senha"""
+    if request.user.is_authenticated:
+        return redirect('app_cartela:dashboard')
+    
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        if email:
+            try:
+                user = User.objects.get(email=email)
+                # Gera token de recuperação
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                
+                # URL de reset (pode ser ajustada para o domínio de produção)
+                current_site = get_current_site(request)
+                reset_url = f"{request.scheme}://{current_site.domain}/recuperar-senha/{uid}/{token}/"
+                
+                # Envia email (em produção, configure SMTP)
+                try:
+                    send_mail(
+                        subject='Recuperação de Senha - Cartela.bet',
+                        message=f'Olá {user.username},\n\nPara redefinir sua senha, acesse o link:\n{reset_url}\n\nSe você não solicitou esta recuperação, ignore este email.\n\nAtenciosamente,\nEquipe Cartela.bet',
+                        from_email=settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else 'noreply@cartela.bet',
+                        recipient_list=[email],
+                        fail_silently=False,
+                    )
+                    messages.success(request, 'Email de recuperação enviado! Verifique sua caixa de entrada.')
+                except Exception as e:
+                    # Em desenvolvimento, mostra o link no console
+                    messages.info(request, f'Link de recuperação (desenvolvimento): {reset_url}')
+                    messages.warning(request, 'Configure o email em produção. Link gerado acima.')
+            except User.DoesNotExist:
+                # Por segurança, não revela se o email existe ou não
+                messages.success(request, 'Se o email estiver cadastrado, você receberá instruções de recuperação.')
+        else:
+            messages.error(request, 'Por favor, informe seu email.')
+    
+    return render(request, 'app_cartela/password_reset_request.html')
+
+
+def password_reset_confirm_view(request, uidb64, token):
+    """View para confirmar e redefinir a senha"""
+    if request.user.is_authenticated:
+        return redirect('app_cartela:dashboard')
+    
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user is None or not default_token_generator.check_token(user, token):
+        messages.error(request, 'Link de recuperação inválido ou expirado.')
+        return redirect('app_cartela:password_reset_request')
+    
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+        
+        if not password or not password_confirm:
+            messages.error(request, 'Por favor, preencha todos os campos.')
+        elif password != password_confirm:
+            messages.error(request, 'As senhas não coincidem.')
+        elif len(password) < 8:
+            messages.error(request, 'A senha deve ter pelo menos 8 caracteres.')
+        else:
+            user.set_password(password)
+            user.save()
+            messages.success(request, 'Senha redefinida com sucesso! Faça login com sua nova senha.')
+            return redirect('app_cartela:login')
+    
+    return render(request, 'app_cartela/password_reset_confirm.html', {
+        'uidb64': uidb64,
+        'token': token,
+    })
 
 
 def admin_login_view(request):

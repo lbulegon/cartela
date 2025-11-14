@@ -4,9 +4,12 @@ from . import views
 app_name = 'app_cartela'
 
 urlpatterns = [
-    # Login do jogador
+    # Autenticação do jogador
     path('', views.login_view, name='login'),
     path('login/', views.login_view, name='login'),
+    path('cadastro/', views.register_view, name='register'),
+    path('recuperar-senha/', views.password_reset_request_view, name='password_reset_request'),
+    path('recuperar-senha/<str:uidb64>/<str:token>/', views.password_reset_confirm_view, name='password_reset_confirm'),
     
     # Login administrativo
     path('empresa/login/', views.admin_login_view, name='admin_login'),
