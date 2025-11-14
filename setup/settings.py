@@ -208,6 +208,9 @@ LOGIN_URL = 'app_cartela:login'
 LOGIN_REDIRECT_URL = 'app_cartela:dashboard'
 LOGOUT_REDIRECT_URL = 'app_cartela:login'
 
+# Admin login settings
+ADMIN_LOGIN_URL = 'app_cartela:admin_login'
+
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

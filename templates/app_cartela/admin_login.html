@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#FFD700">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Cartela.bet">
+    <meta name="apple-mobile-web-app-title" content="Cartela.bet Admin">
     
     {% load static %}
     <!-- PWA Manifest -->
@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="{% static 'icons/icon-512x512.png' %}">
     <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
     
-    <title>Login - Cartela.bet</title>
+    <title>Login Administrativo - Cartela.bet</title>
     <style>
         * {
             margin: 0;
@@ -86,6 +86,13 @@
             opacity: 0.9;
         }
         
+        .login-header h2 {
+            color: #FFD700;
+            font-size: 20px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        
         .login-header p {
             color: #999;
             font-size: 14px;
@@ -150,6 +157,21 @@
             transform: translateY(0);
         }
         
+        .link-jogador {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .link-jogador a {
+            color: #FFD700;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .link-jogador a:hover {
+            text-decoration: underline;
+        }
+        
         .messages {
             margin-bottom: 20px;
         }
@@ -195,11 +217,8 @@
                     <span class="sub">.bet</span>
                 </div>
             </div>
-            <p>Faça login para continuar</p>
-        </div>
-        
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="{% url 'app_cartela:admin_login' %}" style="color: #FFD700; text-decoration: none; font-size: 14px;">Sou administrador →</a>
+            <h2>Área Administrativa</h2>
+            <p>Login para administradores</p>
         </div>
         
         {% if messages %}
@@ -212,10 +231,10 @@
         </div>
         {% endif %}
         
-        <form method="POST" action="{% url 'app_cartela:login' %}">
+        <form method="POST" action="{% url 'app_cartela:admin_login' %}">
             {% csrf_token %}
             <div class="form-group">
-                <label for="username">Usuário</label>
+                <label for="username">Usuário Administrativo</label>
                 <input type="text" id="username" name="username" required autofocus>
             </div>
             
@@ -226,6 +245,10 @@
             
             <button type="submit" class="btn-login">Entrar</button>
         </form>
+        
+        <div class="link-jogador">
+            <a href="{% url 'app_cartela:login' %}">← Sou jogador</a>
+        </div>
     </div>
     
     <!-- PWA Install Script -->

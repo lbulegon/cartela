@@ -4,11 +4,21 @@ from . import views
 app_name = 'app_cartela'
 
 urlpatterns = [
+    # Login do jogador
     path('', views.login_view, name='login'),
     path('login/', views.login_view, name='login'),
+    
+    # Login administrativo
+    path('admin/login/', views.admin_login_view, name='admin_login'),
+    
+    # Logout
     path('logout/', views.logout_view, name='logout'),
+    
+    # Dashboards
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('admin/dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
+    
+    # Funcionalidades do jogador
     path('carteira/', views.carteira_view, name='carteira'),
     path('deposito/', views.deposito_view, name='deposito'),
     path('bonus/', views.bonus_view, name='bonus'),

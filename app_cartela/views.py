@@ -8,8 +8,10 @@ from .models import Carteira, Transacao
 
 
 def login_view(request):
-    """View para fazer login do usuário"""
+    """View para fazer login do jogador/cliente"""
     if request.user.is_authenticated:
+        if request.user.is_staff:
+            return redirect('app_cartela:admin_dashboard')
         return redirect('app_cartela:dashboard')
     
     if request.method == 'POST':
@@ -21,6 +23,9 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f'Bem-vindo, {user.username}!')
+                # Redireciona baseado no tipo de usuário
+                if user.is_staff:
+                    return redirect('app_cartela:admin_dashboard')
                 next_url = request.GET.get('next', 'app_cartela:dashboard')
                 return redirect(next_url)
             else:
@@ -29,6 +34,33 @@ def login_view(request):
             messages.error(request, 'Por favor, preencha todos os campos.')
     
     return render(request, 'app_cartela/login.html')
+
+
+def admin_login_view(request):
+    """View para fazer login administrativo da empresa"""
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('app_cartela:admin_dashboard')
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                if user.is_staff:
+                    login(request, user)
+                    messages.success(request, f'Bem-vindo, {user.username}!')
+                    next_url = request.GET.get('next', 'app_cartela:admin_dashboard')
+                    return redirect(next_url)
+                else:
+                    messages.error(request, 'Acesso negado. Apenas administradores podem acessar esta área.')
+            else:
+                messages.error(request, 'Usuário ou senha incorretos.')
+        else:
+            messages.error(request, 'Por favor, preencha todos os campos.')
+    
+    return render(request, 'app_cartela/admin_login.html')
 
 
 @login_required
