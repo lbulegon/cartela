@@ -260,6 +260,287 @@
             border-color: #FFD700;
         }
         
+        .eventos-section {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .eventos-section h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .event-card {
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .event-card:hover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .event-teams {
+            flex: 1;
+        }
+        
+        .event-teams .team-home {
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .event-teams .team-away {
+            color: #ccc;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .event-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .event-status.live {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff6b6b;
+        }
+        
+        .event-status.scheduled {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+        
+        .event-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .event-action {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .event-action:hover {
+            text-decoration: underline;
+        }
+        
+        .apostas-section {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .apostas-section h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .aposta-item {
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .aposta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .aposta-event {
+            flex: 1;
+        }
+        
+        .aposta-event .event-name {
+            color: #FFD700;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .aposta-event .cartela-tipo {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .aposta-valor {
+            text-align: right;
+        }
+        
+        .aposta-valor .stake {
+            color: #ccc;
+            font-size: 12px;
+        }
+        
+        .aposta-valor .return {
+            color: #6bff6b;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        .aposta-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .aposta-status.pendente {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+        
+        .aposta-status.ganha {
+            background: rgba(51, 204, 51, 0.2);
+            color: #6bff6b;
+        }
+        
+        .aposta-status.perdida {
+            background: rgba(204, 51, 51, 0.2);
+            color: #ff6b6b;
+        }
+        
+        .cartelas-pendentes-section {
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .cartelas-pendentes-section h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .cartela-pendente-item {
+            background: #1a1a1a;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .cartela-pendente-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .cartela-pendente-info {
+            flex: 1;
+        }
+        
+        .cartela-pendente-info .event-name {
+            color: #FFD700;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .cartela-pendente-info .template-name {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .cartela-pendente-premio {
+            text-align: right;
+        }
+        
+        .cartela-pendente-premio .label {
+            color: #999;
+            font-size: 11px;
+        }
+        
+        .cartela-pendente-premio .valor {
+            color: #FFD700;
+            font-weight: 700;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+        
+        .cartela-pendente-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-confirm {
+            flex: 1;
+            padding: 10px;
+            background: #FFD700;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .btn-confirm:hover {
+            background: #FFEB3B;
+        }
+        
+        .btn-cancel {
+            padding: 10px 15px;
+            background: transparent;
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-cancel:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
         .messages {
             margin-bottom: 20px;
         }
@@ -308,6 +589,9 @@
             <div class="nav-links">
                 <a href="{% url 'app_cartela:carteira' %}">Carteira</a>
                 <a href="{% url 'app_cartela:deposito' %}" class="btn-primary">Depositar</a>
+                {% if user.is_staff %}
+                <a href="{% url 'app_cartela:admin_dashboard' %}" style="color: #FFD700; font-weight: 600;">Admin</a>
+                {% endif %}
                 <a href="{% url 'app_cartela:logout' %}" class="btn-logout">Sair</a>
             </div>
         </div>
@@ -326,7 +610,7 @@
         
         <div class="welcome-card">
             <h2>Bem-vindo, <strong>{{ user.username }}</strong>!</h2>
-            <p>Gerencie sua carteira e acompanhe suas transações.</p>
+            <p>Gerencie sua carteira e acompanhe suas apostas.</p>
         </div>
         
         <div class="saldo-cards">
@@ -339,6 +623,62 @@
                 <div class="valor">R$ {{ carteira.fundos|floatformat:2 }}</div>
             </div>
         </div>
+        
+        {% if cartelas_pendentes %}
+        <div class="cartelas-pendentes-section">
+            <h3>Cartelas Pendentes de Confirmação</h3>
+            {% for cartela in cartelas_pendentes %}
+            <div class="cartela-pendente-item">
+                <div class="cartela-pendente-header">
+                    <div class="cartela-pendente-info">
+                        <div class="event-name">{{ cartela.event.team_home }} x {{ cartela.event.team_away }}</div>
+                        <div class="template-name">{{ cartela.cartela_template.nome }}</div>
+                    </div>
+                    <div class="cartela-pendente-premio">
+                        <div class="label">Prêmio Máximo</div>
+                        <div class="valor">R$ {{ cartela.premio_maximo|floatformat:2 }}</div>
+                    </div>
+                </div>
+                <div class="cartela-pendente-actions">
+                    <a href="{% url 'app_cartela:cartela_detail' cartela.id %}" class="btn-confirm">Ver Detalhes</a>
+                    <a href="#" class="btn-cancel" onclick="event.preventDefault(); alert('Funcionalidade de cancelar em desenvolvimento');">Cancelar</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if ultimas_apostas %}
+        <div class="apostas-section">
+            <h3>Minhas Apostas</h3>
+            {% for aposta in ultimas_apostas %}
+            <div class="aposta-item">
+                <div class="aposta-header">
+                    <div class="aposta-event">
+                        <div class="event-name">{{ aposta.cartela.event.team_home }} x {{ aposta.cartela.event.team_away }}</div>
+                        <div class="cartela-tipo">{{ aposta.cartela.cartela_template.nome }}</div>
+                        <span class="aposta-status {% if aposta.is_won == True %}ganha{% elif aposta.is_won == False %}perdida{% else %}pendente{% endif %}">
+                            {% if aposta.is_won == True %}
+                                Ganha
+                            {% elif aposta.is_won == False %}
+                                Perdida
+                            {% else %}
+                                Pendente
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="aposta-valor">
+                        <div class="stake">Apostado: R$ {{ aposta.stake|floatformat:2 }}</div>
+                        <div class="return">Retorno: R$ {{ aposta.potential_return|floatformat:2 }}</div>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #999; margin-top: 10px;">
+                    {{ aposta.created_at|date:"d/m/Y H:i" }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         
         <div class="transacoes-recentes">
             <h3>Últimas Transações</h3>

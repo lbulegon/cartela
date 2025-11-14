@@ -41,16 +41,111 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    """View do dashboard após login"""
+    """View do dashboard do jogador/cliente"""
+    from betting.models import Bet, CartelaInstance
+    
     carteira, created = Carteira.objects.get_or_create(usuario=request.user)
     
     # Últimas 5 transações
     ultimas_transacoes = carteira.transacoes.all()[:5]
     
-    return render(request, 'app_cartela/dashboard.html', {
+    # Últimas apostas do usuário
+    ultimas_apostas = Bet.objects.filter(
+        cartela__user=request.user
+    ).select_related(
+        'cartela',
+        'cartela__event',
+        'cartela__cartela_template'
+    ).order_by('-created_at')[:5]
+    
+    # Cartelas pendentes (em APOSTA_PENDENTE)
+    cartelas_pendentes = CartelaInstance.objects.filter(
+        user=request.user,
+        status='APOSTA_PENDENTE'
+    ).select_related('event', 'cartela_template').order_by('-created_at')[:5]
+    
+    return render(request, 'app_cartela/jogador_dashboard.html', {
         'user': request.user,
         'carteira': carteira,
-        'ultimas_transacoes': ultimas_transacoes
+        'ultimas_transacoes': ultimas_transacoes,
+        'ultimas_apostas': ultimas_apostas,
+        'cartelas_pendentes': cartelas_pendentes,
+    })
+
+
+@login_required
+def admin_dashboard_view(request):
+    """View do dashboard administrativo da empresa"""
+    if not request.user.is_staff:
+        messages.error(request, 'Acesso negado. Apenas administradores.')
+        return redirect('app_cartela:dashboard')
+    
+    from betting.models import Event, Bet, CartelaInstance, RiskExposureMetrics
+    from django.contrib.auth.models import User
+    from django.db.models import Sum, Count, Q
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Estatísticas gerais
+    total_usuarios = User.objects.count()
+    total_eventos = Event.objects.count()
+    eventos_hoje = Event.objects.filter(
+        start_time__date=timezone.now().date()
+    ).count()
+    eventos_ao_vivo = Event.objects.filter(status='LIVE').count()
+    
+    # Estatísticas de apostas
+    total_apostas = Bet.objects.count()
+    apostas_hoje = Bet.objects.filter(
+        created_at__date=timezone.now().date()
+    ).count()
+    
+    volume_total = Bet.objects.aggregate(
+        total=Sum('stake')
+    )['total'] or 0
+    
+    volume_hoje = Bet.objects.filter(
+        created_at__date=timezone.now().date()
+    ).aggregate(
+        total=Sum('stake')
+    )['total'] or 0
+    
+    # Cartelas pendentes
+    cartelas_pendentes_count = CartelaInstance.objects.filter(
+        status='APOSTA_PENDENTE'
+    ).count()
+    
+    # Eventos recentes
+    eventos_recentes = Event.objects.filter(
+        status__in=['SCHEDULED', 'LIVE']
+    ).order_by('start_time')[:10]
+    
+    # Apostas recentes
+    apostas_recentes = Bet.objects.select_related(
+        'cartela',
+        'cartela__user',
+        'cartela__event'
+    ).order_by('-created_at')[:10]
+    
+    # Métricas de risco
+    risco_alto = RiskExposureMetrics.objects.filter(
+        payout_maximo__gt=10000
+    ).count()
+    
+    return render(request, 'app_cartela/admin_dashboard.html', {
+        'user': request.user,
+        'total_usuarios': total_usuarios,
+        'total_eventos': total_eventos,
+        'eventos_hoje': eventos_hoje,
+        'eventos_ao_vivo': eventos_ao_vivo,
+        'total_apostas': total_apostas,
+        'apostas_hoje': apostas_hoje,
+        'volume_total': volume_total,
+        'volume_hoje': volume_hoje,
+        'cartelas_pendentes_count': cartelas_pendentes_count,
+        'risco_alto': risco_alto,
+        'eventos_recentes': eventos_recentes,
+        'apostas_recentes': apostas_recentes,
     })
 
 
@@ -125,6 +220,7 @@ def bonus_view(request):
         tipo_bonus = request.POST.get('tipo', 'BONUS')  # BONUS ou PREMIO
         
         try:
+            from django.contrib.auth.models import User
             usuario = get_object_or_404(User, id=usuario_id)
             carteira_usuario, _ = Carteira.objects.get_or_create(usuario=usuario)
             valor = Decimal(valor_str)
@@ -144,8 +240,44 @@ def bonus_view(request):
         except Exception as e:
             messages.error(request, f'Erro: {str(e)}')
     
+    from django.contrib.auth.models import User
     usuarios = User.objects.all().order_by('username')
     return render(request, 'app_cartela/bonus.html', {
         'usuarios': usuarios,
         'tipos': Transacao.TIPO_CHOICES
+    })
+
+
+@login_required
+def evento_view(request, event_id):
+    """View para visualizar um evento e seus templates de cartela"""
+    from betting.models import Event, CartelaTemplate, MarketSelection
+    
+    evento = get_object_or_404(Event, id=event_id)
+    templates = CartelaTemplate.objects.filter(ativo=True)
+    
+    # Seleções disponíveis (pode filtrar por template depois)
+    selecoes = MarketSelection.objects.filter(event=evento)
+    
+    return render(request, 'app_cartela/evento.html', {
+        'evento': evento,
+        'templates': templates,
+        'selecoes': selecoes,
+    })
+
+
+@login_required
+def cartela_detail_view(request, cartela_id):
+    """View para visualizar detalhes de uma cartela"""
+    from betting.models import CartelaInstance
+    
+    cartela = get_object_or_404(
+        CartelaInstance.objects.select_related('event', 'cartela_template', 'user')
+        .prefetch_related('items', 'items__market_selection'),
+        id=cartela_id,
+        user=request.user
+    )
+    
+    return render(request, 'app_cartela/cartela_detail.html', {
+        'cartela': cartela,
     })
