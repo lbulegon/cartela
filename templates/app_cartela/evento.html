@@ -290,18 +290,47 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
         }
         
         .selected-item .desc {
             color: #ccc;
             font-size: 14px;
             flex: 1;
+            margin-right: 10px;
         }
         
         .selected-item .odd {
             color: #FFD700;
             font-weight: 600;
             margin-right: 10px;
+        }
+        
+        .selected-item .remove-btn {
+            background: rgba(255, 51, 51, 0.2);
+            border: 1px solid rgba(255, 51, 51, 0.5);
+            color: #ff6b6b;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .selected-item .remove-btn:hover {
+            background: rgba(255, 51, 51, 0.4);
+            border-color: #ff6b6b;
+            transform: scale(1.1);
+        }
+        
+        .selected-item .remove-btn:active {
+            transform: scale(0.95);
         }
         
         .cartela-total {
@@ -465,6 +494,12 @@
             }
             
             .selected-item .odd {
+                font-size: 14px;
+            }
+            
+            .selected-item .remove-btn {
+                width: 20px;
+                height: 20px;
                 font-size: 14px;
             }
             
@@ -716,9 +751,10 @@
                 const sel = selections[id];
                 oddAcumulada *= sel.odd;
                 html += `
-                    <div class="selected-item">
+                    <div class="selected-item" data-selection-id="${id}">
                         <div class="desc">${sel.desc}</div>
                         <div class="odd">${sel.odd.toFixed(2)}</div>
+                        <button class="remove-btn" data-selection-id="${id}" title="Remover">×</button>
                     </div>
                 `;
             });
@@ -728,6 +764,33 @@
             totalOdd.textContent = oddAcumulada.toFixed(2);
             totalPremio.textContent = 'R$ ' + (stake * oddAcumulada).toFixed(2);
             btnConfirm.disabled = selectionIds.length < 3;
+            
+            // Adiciona event listeners aos botões de remoção
+            container.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const selectionId = this.dataset.selectionId;
+                    removeFromCartela(selectionId);
+                });
+            });
+        }
+        
+        function removeFromCartela(selectionId) {
+            // Remove do objeto selections
+            delete selections[selectionId];
+            
+            // Desmarca o checkbox e remove a classe selected do card
+            const card = document.querySelector(`.selection-card[data-selection-id="${selectionId}"]`);
+            if (card) {
+                const checkbox = card.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
+                card.classList.remove('selected');
+            }
+            
+            // Atualiza a preview da cartela
+            updateCartelaPreview();
         }
         
         document.getElementById('btn-confirm').addEventListener('click', function() {
