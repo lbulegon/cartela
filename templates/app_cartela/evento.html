@@ -21,8 +21,9 @@
         .header {
             background: #2a2a2a;
             border-bottom: 2px solid #FFD700;
-            padding: 20px 40px;
+            padding: 15px 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
         }
         
         .header-content {
@@ -31,6 +32,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header-content {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
         
         .logo-container {
@@ -82,6 +100,8 @@
             max-width: 1400px;
             margin: 40px auto;
             padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .event-header {
@@ -302,6 +322,53 @@
             text-align: center;
             padding: 40px;
             color: #999;
+        }
+        
+        .main-content-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .cartela-preview {
+                position: relative !important;
+                top: 0 !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .event-header {
+                padding: 20px;
+            }
+            
+            .event-teams {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .team {
+                font-size: 22px;
+            }
+            
+            .selections-section {
+                padding: 20px;
+            }
+            
+            .selections-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cartela-preview {
+                padding: 20px;
+            }
         }
     </style>
 </head>

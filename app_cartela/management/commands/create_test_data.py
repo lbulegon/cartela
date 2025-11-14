@@ -7,26 +7,10 @@ from betting.models import (
 
 
 class Command(BaseCommand):
-    help = 'Cria dados de teste: evento, seleções e template de cartela'
+    help = 'Cria dados de teste: eventos, seleções e template de cartela'
 
-    def handle(self, *args, **options):
-        # Cria evento de teste
-        evento, created = Event.objects.get_or_create(
-            team_home='Flamengo',
-            team_away='Palmeiras',
-            defaults={
-                'sport': 'SOCCER',
-                'start_time': timezone.now() + timedelta(hours=2),
-                'status': 'SCHEDULED',
-            }
-        )
-        
-        if created:
-            self.stdout.write(self.style.SUCCESS(f'Evento criado: {evento}'))
-        else:
-            self.stdout.write(self.style.WARNING(f'Evento já existe: {evento}'))
-        
-        # Cria seleções de mercado (quadrinhos)
+    def criar_selecoes_para_evento(self, evento):
+        """Cria seleções de mercado para um evento"""
         selecoes_data = [
             {
                 'selection_type': 'TOTAL_GOALS_OVER',
@@ -86,9 +70,73 @@ class Command(BaseCommand):
             if created:
                 selecoes_criadas += 1
         
-        self.stdout.write(self.style.SUCCESS(f'{selecoes_criadas} seleções criadas'))
+        return selecoes_criadas
+
+    def handle(self, *args, **options):
+        # Lista de eventos para criar
+        eventos_data = [
+            {
+                'team_home': 'Flamengo',
+                'team_away': 'Palmeiras',
+                'sport': 'SOCCER',
+                'hours_offset': 2,
+            },
+            {
+                'team_home': 'Corinthians',
+                'team_away': 'São Paulo',
+                'sport': 'SOCCER',
+                'hours_offset': 4,
+            },
+            {
+                'team_home': 'Lakers',
+                'team_away': 'Warriors',
+                'sport': 'BASKETBALL',
+                'hours_offset': 6,
+            },
+            {
+                'team_home': 'Nadal',
+                'team_away': 'Djokovic',
+                'sport': 'TENNIS',
+                'hours_offset': 8,
+            },
+            {
+                'team_home': 'Brasil',
+                'team_away': 'Argentina',
+                'sport': 'SOCCER',
+                'hours_offset': 10,
+            },
+            {
+                'team_home': 'Flamengo',
+                'team_away': 'Vasco',
+                'sport': 'SOCCER',
+                'hours_offset': 12,
+            },
+        ]
         
-        # Cria template de cartela
+        eventos_criados = []
+        total_selecoes = 0
+        
+        for evt_data in eventos_data:
+            evento, created = Event.objects.get_or_create(
+                team_home=evt_data['team_home'],
+                team_away=evt_data['team_away'],
+                defaults={
+                    'sport': evt_data['sport'],
+                    'start_time': timezone.now() + timedelta(hours=evt_data['hours_offset']),
+                    'status': 'SCHEDULED',
+                }
+            )
+            
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'✅ Evento criado: {evento}'))
+                selecoes_criadas = self.criar_selecoes_para_evento(evento)
+                total_selecoes += selecoes_criadas
+                self.stdout.write(self.style.SUCCESS(f'   └─ {selecoes_criadas} seleções criadas'))
+                eventos_criados.append(evento)
+            else:
+                self.stdout.write(self.style.WARNING(f'⚠️  Evento já existe: {evento}'))
+        
+        # Cria template de cartela (se não existir)
         template, created = CartelaTemplate.objects.get_or_create(
             nome='Cartela do Jogo',
             defaults={
@@ -103,9 +151,9 @@ class Command(BaseCommand):
         )
         
         if created:
-            self.stdout.write(self.style.SUCCESS(f'Template criado: {template.nome}'))
+            self.stdout.write(self.style.SUCCESS(f'✅ Template criado: {template.nome}'))
         else:
-            self.stdout.write(self.style.WARNING(f'Template já existe: {template.nome}'))
+            self.stdout.write(self.style.WARNING(f'⚠️  Template já existe: {template.nome}'))
         
         # Cria itens do template (permite todos os tipos)
         tipos_permitidos = ['TOTAL_GOALS_OVER', 'NEXT_CORNER', 'TEAM_TO_SCORE']
@@ -115,10 +163,17 @@ class Command(BaseCommand):
                 allowed_selection_type=tipo,
             )
             if created:
-                self.stdout.write(self.style.SUCCESS(f'Item de template criado: {tipo}'))
+                self.stdout.write(self.style.SUCCESS(f'   └─ Item de template criado: {tipo}'))
         
-        self.stdout.write(self.style.SUCCESS('\n✅ Dados de teste criados com sucesso!'))
-        self.stdout.write(f'\n📊 Evento ID: {evento.id}')
+        self.stdout.write(self.style.SUCCESS('\n' + '='*50))
+        self.stdout.write(self.style.SUCCESS('✅ Dados de teste criados com sucesso!'))
+        self.stdout.write(self.style.SUCCESS('='*50))
+        self.stdout.write(f'\n📊 Total de eventos criados: {len(eventos_criados)}')
+        self.stdout.write(f'🎯 Total de seleções criadas: {total_selecoes}')
         self.stdout.write(f'📋 Template ID: {template.id}')
-        self.stdout.write(f'🎯 Total de seleções: {MarketSelection.objects.filter(event=evento).count()}')
+        
+        if eventos_criados:
+            self.stdout.write(f'\n📅 Eventos criados:')
+            for evt in eventos_criados:
+                self.stdout.write(f'   • {evt} (ID: {evt.id}) - {evt.get_sport_display()}')
 
