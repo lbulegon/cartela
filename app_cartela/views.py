@@ -382,19 +382,28 @@ def bonus_view(request):
 
 @login_required
 def evento_view(request, event_id):
-    """View para visualizar um evento e seus templates de cartela"""
+    """View para visualizar um evento e criar cartelas"""
     from betting.models import Event, CartelaTemplate, MarketSelection
     
     evento = get_object_or_404(Event, id=event_id)
     templates = CartelaTemplate.objects.filter(ativo=True)
     
-    # Seleções disponíveis (pode filtrar por template depois)
-    selecoes = MarketSelection.objects.filter(event=evento)
+    # Seleções disponíveis para este evento
+    selecoes = MarketSelection.objects.filter(event=evento).order_by('selection_type', 'id')
+    
+    # Agrupa seleções por tipo para facilitar visualização
+    selecoes_por_tipo = {}
+    for sel in selecoes:
+        tipo = sel.selection_type
+        if tipo not in selecoes_por_tipo:
+            selecoes_por_tipo[tipo] = []
+        selecoes_por_tipo[tipo].append(sel)
     
     return render(request, 'app_cartela/evento.html', {
         'evento': evento,
         'templates': templates,
         'selecoes': selecoes,
+        'selecoes_por_tipo': selecoes_por_tipo,
     })
 
 

@@ -364,8 +364,12 @@
                                     <input type="checkbox" name="selection" value="{{ selecao.id }}">
                                     <div class="selection-info">
                                         <div class="selection-desc">
-                                            {% if selecao.params %}
-                                                {{ selecao.selection_type }} - {{ selecao.params|safe }}
+                                            {% if selecao.selection_type == 'TOTAL_GOALS_OVER' %}
+                                                Total de Gols Acima de {{ selecao.params.line|default:"2.5" }}
+                                            {% elif selecao.selection_type == 'NEXT_CORNER' %}
+                                                Próximo Escanteio - {% if selecao.params.team == 'home' %}{{ evento.team_home }}{% else %}{{ evento.team_away }}{% endif %}
+                                            {% elif selecao.selection_type == 'TEAM_TO_SCORE' %}
+                                                {% if selecao.params.team == 'home' %}{{ evento.team_home }}{% else %}{{ evento.team_away }}{% endif %} Marcará no {% if selecao.params.time == 'first_half' %}1º Tempo{% else %}2º Tempo{% endif %}
                                             {% else %}
                                                 {{ selecao.selection_type }}
                                             {% endif %}
